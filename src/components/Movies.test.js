@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import Movies from "./movies";
 
 describe("Movies component", () => {
@@ -20,10 +20,36 @@ describe("Movies component", () => {
       expect(button).toBeInTheDocument();
     });
 
-    it("has a red background color", () => {
+    it("has a green background color", () => {
       render(<Movies />);
       const button = screen.getByRole("button", { name: /gör till favorit/i });
-      expect(button).toHaveStyle({ backgroundColor: "red" });
+      expect(button).toHaveStyle({ backgroundColor: "green" });
+    });
+
+    it("changes the background color to red when clicked", () => {
+      render(<Movies />);
+      const button = screen.getByRole("button", { name: /gör till favorit/i });
+      fireEvent.click(button);
+      expect(button).toHaveStyle({ "background-color": "red" });
+    });
+
+    it("is disabled when the checkbox is checked", () => {
+      render(<Movies />);
+      const button = screen.getByRole("button", { name: /gör till favorit/i });
+      const checkbox = screen.getByRole("checkbox", {
+        name: /Avaktivera favoritknappen/i,
+      });
+      fireEvent.click(checkbox);
+      expect(button).toBeDisabled();
+    });
+  });
+  describe("should have a checkbox for disabling the add to favorites button", () => {
+    it("checkbox should unchecked initially", () => {
+      render(<Movies />);
+      const checkbox = screen.getByRole("checkbox", {
+        name: /Avaktivera favoritknappen/i,
+      });
+      expect(checkbox).not.toBeChecked();
     });
   });
 });
